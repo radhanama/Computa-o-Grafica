@@ -30,9 +30,14 @@ class SphereApp(GLAPP):
         self.sphereArrayBufferId = None
         
     def coordenadaEsferica(self, i,j,n):
+        position = array('f')
         theta = i*2*math.pi/n
         phi = j*math.pi/n-math.pi/2
-        return (phi, theta)
+        
+        position.append(math.cos(theta)*math.cos(phi))
+        position.append(math.sin(phi))
+        position.append(math.sin(theta)*math.cos(phi))
+        return position
 
     def drawSphere(self):
         n = 50
@@ -43,16 +48,10 @@ class SphereApp(GLAPP):
                 for j in range(0,n):
                     uvs.append(j/(n-1))
                     uvs.append(i/(n-1))
-                    phi, theta = self.coordenadaEsferica(i,j,n)
-                    position.append(math.cos(theta)*math.cos(phi))
-                    position.append(math.sin(phi))
-                    position.append(math.sin(theta)*math.cos(phi))
+                    position += self.coordenadaEsferica(i,j,n)
                     uvs.append(j/(n-1))
                     uvs.append((i-1)/(n-1))
-                    phi2, theta2 = self.coordenadaEsferica(i-1,j,n)
-                    position.append(math.cos(theta2)*math.cos(phi2))
-                    position.append(math.sin(phi2))
-                    position.append(math.sin(theta2)*math.cos(phi2))
+                    position += self.coordenadaEsferica(i-1,j,n)
 
             self.sphereArrayBufferId = GL.glGenVertexArrays(1)
             GL.glBindVertexArray(self.sphereArrayBufferId)
